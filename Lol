@@ -11,9 +11,9 @@ local PlayerMouse = Player:GetMouse()
 
 local redzlib = {
 	Themes = {
-		Sky = {
-			["Color Hub 1"] = ColorSequence.new({
-				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(220, 240, 255)),
+                Sky = {
+                        ["Color Hub 1"] = ColorSequence.new({
+                                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(220, 240, 255)),
 				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(240, 250, 255)),
 				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(220, 240, 255))
 			}),
@@ -120,18 +120,32 @@ local redzlib = {
 			["Color Theme"] = Color3.fromRGB(150, 0, 255),
 			["Color Text"] = Color3.fromRGB(240, 240, 240),
 			["Color Dark Text"] = Color3.fromRGB(180, 180, 180),
-			["Color Accent"] = Color3.fromRGB(130, 0, 235),
-			["Color Glow"] = Color3.fromRGB(170, 20, 275)
-		}
-	},
-	Info = {
-		Version = "7.0.2 Enhanced Pro"
-	},
-	Save = {
-		UISize = {580, 400},
-		TabSize = 170,
-		Theme = "Darker"
-	},
+                        ["Color Accent"] = Color3.fromRGB(130, 0, 235),
+                        ["Color Glow"] = Color3.fromRGB(170, 20, 275)
+                },
+                Aurora = {
+                        ["Color Hub 1"] = ColorSequence.new({
+                                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(18, 29, 45)),
+                                ColorSequenceKeypoint.new(0.50, Color3.fromRGB(38, 67, 110)),
+                                ColorSequenceKeypoint.new(1.00, Color3.fromRGB(18, 29, 45))
+                        }),
+                        ["Color Hub 2"] = Color3.fromRGB(26, 41, 68),
+                        ["Color Stroke"] = Color3.fromRGB(70, 105, 155),
+                        ["Color Theme"] = Color3.fromRGB(120, 195, 255),
+                        ["Color Text"] = Color3.fromRGB(232, 241, 255),
+                        ["Color Dark Text"] = Color3.fromRGB(180, 198, 222),
+                        ["Color Accent"] = Color3.fromRGB(145, 210, 255),
+                        ["Color Glow"] = Color3.fromRGB(90, 145, 210)
+                }
+        },
+        Info = {
+                Version = "7.0.2 Enhanced Pro"
+        },
+        Save = {
+                UISize = {580, 400},
+                TabSize = 170,
+                Theme = "Aurora"
+        },
 	Settings = {},
 	Connection = {},
 	Instances = {},
@@ -461,10 +475,10 @@ local function Make(Ele, Instance, props, ...)
 end
 
 AddEle("Corner", function(parent, CornerRadius)
-	local New = SetProps(Create("UICorner", parent, {
-		CornerRadius = CornerRadius or UDim.new(0, 8)
-	}))
-	return New
+        local New = SetProps(Create("UICorner", parent, {
+                CornerRadius = CornerRadius or UDim.new(0, 12)
+        }))
+        return New
 end)
 
 AddEle("Stroke", function(parent, props, ...)
@@ -479,36 +493,59 @@ AddEle("Stroke", function(parent, props, ...)
 end)
 
 AddEle("Glow", function(parent, props, ...)
-	local args = {...}
-	local New = InsertTheme(SetProps(Create("UIStroke", parent, {
-		Color = args[1] or Theme["Color Glow"],
-		Thickness = args[2] or 2,
-		ApplyStrokeMode = "Border",
-		Transparency = args[3] or 0.85
-	}), props), "Glow")
-	return New
+        local args = {...}
+        local New = InsertTheme(SetProps(Create("UIStroke", parent, {
+                Color = args[1] or Theme["Color Glow"],
+                Thickness = args[2] or 2,
+                ApplyStrokeMode = "Border",
+                Transparency = args[3] or 0.85
+        }), props), "Glow")
+        return New
+end)
+
+AddEle("Shadow", function(parent, props, ...)
+        local args = {...}
+        local New = InsertTheme(SetProps(Create("ImageLabel", parent, {
+                Name = "Shadow",
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                Position = UDim2.fromScale(0.5, 0.5),
+                BackgroundTransparency = 1,
+                Image = "rbxassetid://1316045217",
+                ImageColor3 = args[1] or Theme["Color Glow"],
+                ImageTransparency = args[2] or 0.5,
+                ScaleType = Enum.ScaleType.Slice,
+                SliceCenter = Rect.new(10, 10, 118, 118),
+                Size = UDim2.new(1, args[3] or 26, 1, args[3] or 26),
+                ZIndex = 0
+        }), props), "Glow")
+        return New
 end)
 
 AddEle("Button", function(parent, props, ...)
-	local args = {...}
-	local New = InsertTheme(SetProps(Create("TextButton", parent, {
-		Text = "",
-		Size = UDim2.fromScale(1, 1),
-		BackgroundColor3 = Theme["Color Hub 2"],
-		AutoButtonColor = false,
-		BackgroundTransparency = 0.05
-	}), props), "Frame")
+        local args = {...}
+        local New = InsertTheme(SetProps(Create("TextButton", parent, {
+                Text = "",
+                Size = UDim2.fromScale(1, 1),
+                BackgroundColor3 = Theme["Color Hub 2"],
+                AutoButtonColor = false,
+                BackgroundTransparency = 0.08
+        }), props), "Frame")
 
-	New.MouseEnter:Connect(function()
-		CreateTween({New, "BackgroundTransparency", 0, 0.15})
-	end)
-	New.MouseLeave:Connect(function()
-		CreateTween({New, "BackgroundTransparency", 0.05, 0.15})
-	end)
-	if args[1] then
-		New.Activated:Connect(args[1])
-	end
-	return New
+        Make("Gradient", New, { Rotation = 115, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.08), NumberSequenceKeypoint.new(1, 0.16)}) })
+        Make("Stroke", New, nil, 1.35, 0.25)
+
+        New.MouseEnter:Connect(function()
+                CreateTween({New, "BackgroundTransparency", 0.02, 0.18})
+                CreateTween({New, "BackgroundColor3", Theme["Color Theme"], 0.18})
+        end)
+        New.MouseLeave:Connect(function()
+                CreateTween({New, "BackgroundTransparency", 0.08, 0.18})
+                CreateTween({New, "BackgroundColor3", Theme["Color Hub 2"], 0.18})
+        end)
+        if args[1] then
+                New.Activated:Connect(args[1])
+        end
+        return New
 end)
 
 AddEle("Gradient", function(parent, props, ...)
@@ -548,11 +585,14 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
 		RichText = true
 	}), "DarkText")
 
-	local Frame = Make("Button", Instance, {
-		Size = UDim2.new(1, 0, 0, 28),
-		AutomaticSize = "Y",
-		Name = "Option"
-	})Make("Corner", Frame)Make("Glow", Frame)
+        local Frame = Make("Button", Instance, {
+                Size = UDim2.new(1, 0, 0, 28),
+                AutomaticSize = "Y",
+                Name = "Option"
+        })
+        Make("Corner", Frame)
+        Make("Glow", Frame)
+        Make("Stroke", Frame, nil, 1.1, 0.2)
 
 	local LabelHolder = Create("Frame", Frame, {
 		AutomaticSize = "Y",
@@ -694,13 +734,15 @@ function redzlib:MakeWindow(Configs)
 		end
 	end;LoadFile()
 
-	local UISizeX, UISizeY = unpack(redzlib.Save.UISize)
-	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
-		Size = UDim2.fromOffset(UISizeX, UISizeY),
-		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
-		BackgroundTransparency = 0.02,
-		Name = "Hub"
-	}), "Main")
+        local UISizeX, UISizeY = unpack(redzlib.Save.UISize)
+        local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
+                Size = UDim2.fromOffset(UISizeX, UISizeY),
+                Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
+                BackgroundTransparency = 0.02,
+                Name = "Hub"
+        }), "Main")
+
+        Make("Shadow", MainFrame, { ZIndex = 0 }, Theme["Color Glow"], 0.6, 36)
 
 	if WBackgroundImage then
 		MainFrame.Image = WBackgroundImage
@@ -717,65 +759,69 @@ function redzlib:MakeWindow(Configs)
 	local Components = Create("Folder", MainFrame, { Name = "Components" })
 	local DropdownHolder = Create("Folder", ScreenGui, { Name = "Dropdown" })
 
-	local TopBar = Create("Frame", Components, {
-		Size = UDim2.new(1, 0, 0, 35),
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = WBackgroundImage and 0.7 or 1,
-		Name = "Top Bar"
-	})
+        local TopBar = Create("Frame", Components, {
+                Size = UDim2.new(1, 0, 0, 35),
+                BackgroundColor3 = Theme["Color Hub 2"],
+                BackgroundTransparency = WBackgroundImage and 0.6 or 0.15,
+                Name = "Top Bar"
+        })
+        Make("Gradient", TopBar, { Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.2), NumberSequenceKeypoint.new(1, 0.1)}) })
+        Make("Stroke", TopBar, nil, 1, 0.35)
 
 	local Title = InsertTheme(Create("TextLabel", TopBar, {
-		Position = UDim2.new(0, 18, 0.5),
-		AnchorPoint = Vector2.new(0, 0.5),
-		AutomaticSize = "XY",
-		Text = WTitle,
-		TextXAlignment = "Left",
-		TextSize = 14,
-		TextColor3 = Theme["Color Text"],
-		BackgroundTransparency = 1,
-		Font = Enum.Font.GothamBold,
-		Name = "Title"
-	}, {
+                Position = UDim2.new(0, 18, 0.5),
+                AnchorPoint = Vector2.new(0, 0.5),
+                AutomaticSize = "XY",
+                Text = WTitle,
+                TextXAlignment = "Left",
+                TextSize = 15,
+                TextColor3 = Theme["Color Text"],
+                BackgroundTransparency = 1,
+                Font = Enum.Font.GothamBold,
+                Name = "Title"
+        }, {
 		InsertTheme(Create("TextLabel", {
 			Size = UDim2.fromScale(0, 1),
 			AutomaticSize = "X",
 			AnchorPoint = Vector2.new(0, 1),
 			Position = UDim2.new(1, 8, 0.85),
-			Text = WMiniText,
-			TextColor3 = Theme["Color Dark Text"],
-			BackgroundTransparency = 1,
-			TextXAlignment = "Left",
-			TextYAlignment = "Bottom",
-			TextSize = 9,
-			Font = Enum.Font.Gotham,
-			Name = "SubTitle"
-		}), "DarkText")
-	}), "Text")
+                        Text = WMiniText,
+                        TextColor3 = Theme["Color Dark Text"],
+                        BackgroundTransparency = 1,
+                        TextXAlignment = "Left",
+                        TextYAlignment = "Bottom",
+                        TextSize = 10,
+                        Font = Enum.Font.Gotham,
+                        Name = "SubTitle"
+                }), "DarkText")
+        }), "Text")
 
-	local MainScroll = InsertTheme(Create("ScrollingFrame", Components, {
-		Size = UDim2.new(0, redzlib.Save.TabSize, 1, -TopBar.Size.Y.Offset),
-		ScrollBarImageColor3 = Theme["Color Theme"],
-		Position = UDim2.new(0, 0, 1, 0),
-		AnchorPoint = Vector2.new(0, 1),
-		ScrollBarThickness = 3,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = WBackgroundImage and 0.7 or 1,
-		ScrollBarImageTransparency = 0.3,
-		CanvasSize = UDim2.new(),
-		AutomaticCanvasSize = "Y",
-		ScrollingDirection = "Y",
-		BorderSizePixel = 0,
-		Name = "Tab Scroll"
-	}), "ScrollBar")
+        local MainScroll = InsertTheme(Create("ScrollingFrame", Components, {
+                Size = UDim2.new(0, redzlib.Save.TabSize, 1, -TopBar.Size.Y.Offset),
+                ScrollBarImageColor3 = Theme["Color Theme"],
+                Position = UDim2.new(0, 0, 1, 0),
+                AnchorPoint = Vector2.new(0, 1),
+                ScrollBarThickness = 3,
+                BackgroundColor3 = Theme["Color Hub 2"],
+                BackgroundTransparency = WBackgroundImage and 0.55 or 0.18,
+                ScrollBarImageTransparency = 0.3,
+                CanvasSize = UDim2.new(),
+                AutomaticCanvasSize = "Y",
+                ScrollingDirection = "Y",
+                BorderSizePixel = 0,
+                Name = "Tab Scroll"
+        }), "ScrollBar")
+        Make("Gradient", MainScroll, { Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.08), NumberSequenceKeypoint.new(1, 0.18)}) })
 
-	local TabHighlighter = InsertTheme(Create("Frame", MainScroll, {
-		BackgroundColor3 = Theme["Color Accent"],
-		BackgroundTransparency = 0.8,
-		ZIndex = 0,
-		Size = UDim2.new(1, 0, 0, 28),
-		Position = UDim2.fromOffset(0, -100),
-	}), "Accent")
-	Make("Corner", TabHighlighter)
+        local TabHighlighter = InsertTheme(Create("Frame", MainScroll, {
+                BackgroundColor3 = Theme["Color Accent"],
+                BackgroundTransparency = 0.65,
+                ZIndex = 0,
+                Size = UDim2.new(1, 0, 0, 28),
+                Position = UDim2.fromOffset(0, -100),
+        }), "Accent")
+        Make("Corner", TabHighlighter)
+        Make("Gradient", TabHighlighter, { Rotation = 90, Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Theme["Color Accent"]), ColorSequenceKeypoint.new(1, Theme["Color Theme"])}) })
 
 	local TabListFrame = Create("Frame", MainScroll, {
 		Name = "TabListFrame",
@@ -795,15 +841,16 @@ function redzlib:MakeWindow(Configs)
 		})
 	})
 
-	local Containers = Create("Frame", Components, {
-		Size = UDim2.new(1, -MainScroll.Size.X.Offset, 1, -TopBar.Size.Y.Offset),
-		AnchorPoint = Vector2.new(1, 1),
-		Position = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = WBackgroundImage and 0.7 or 1,
-		ClipsDescendants = true,
-		Name = "Containers"
-	})
+        local Containers = Create("Frame", Components, {
+                Size = UDim2.new(1, -MainScroll.Size.X.Offset, 1, -TopBar.Size.Y.Offset),
+                AnchorPoint = Vector2.new(1, 1),
+                Position = UDim2.new(1, 0, 1, 0),
+                BackgroundColor3 = Theme["Color Hub 2"],
+                BackgroundTransparency = WBackgroundImage and 0.55 or 0.12,
+                ClipsDescendants = true,
+                Name = "Containers"
+        })
+        Make("Gradient", Containers, { Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.06), NumberSequenceKeypoint.new(1, 0.14)}) })
 
 	local ControlSize1, ControlSize2 = MakeDrag(Create("ImageButton", MainFrame, {
 		Size = UDim2.new(0, 40, 0, 40),
